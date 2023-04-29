@@ -12,10 +12,11 @@ function App() {
     inputValue: string; //入力したタスク
     id: number; //どのタスクなのかを認識するためのid
     checked: boolean;  //完了or未完了かの判定
+    status: string; //タスクの状態を表す
   };
   // Todo変数の型を指定することで、エラーを見つけやすくする(typeScriptの強み) ※型ミスを防ぐ
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // console.log(e.target.value); //input情報をどうやって取得出来るのかを確認する 無事取得できたこと確認↓のコード記入
     setInputValue(e.target.value)
     // inputValueに格納される。格納されたinputValueをtodoオブジェクトの中に入れる　格納されるコードはonSubmitへ
@@ -30,6 +31,7 @@ function App() {
       inputValue: inputValue, //右側のinputValueはuseStateで保持している変数
       id: todos.length, //todos配列の長さ
       checked: false, //新規作成の場合は未完了からスタートするためfalseスタート
+      status: 'notStarted', //未完了スタート
     };
 
     // 更新されたTodoリスト デフォルトが配列のため、[]とする
@@ -38,6 +40,16 @@ function App() {
     setInputValue('');
     // 新しいtodoを追加したのちは空にする
   };
+
+  // const handleStatusTodo = () => {
+  //   setTodos([...todos, { 
+  //     id: number, 
+  //     title: inputValue, 
+  //     status: 'notStarted' }])
+  //   setTodoId(todoId + 1)
+  //   setInputValue('');
+  // }
+  // ※これはいらない？
 
     const handleEdit = (id: number, inputValue: string) => {
       // idとinputValueという適当に引数を決める 型指定しているため、パラメーターエラーがでることがある。id:number, inputValue:stringと書いてエラー解消する
@@ -67,6 +79,15 @@ function App() {
       setTodos(newTodos);
     };
 
+    const handleStatusChange = (id: number, status: string) => {
+      const newTodos = todos.map((todo) =>
+      todo.id === id ? { ...todo, status: e.target.value } : todo
+    )
+    // ここのe.target.valueはどうすればいいのか？
+    setTodos(newTodos)
+    }
+    
+
     const handleDelete = (id:number) => {
       const newTodos = todos.filter((todo) => todo.id !== id);
       // filterで全てのtodo.idを見に行く　条件式がtrueになったものだけ残す
@@ -82,8 +103,8 @@ function App() {
         {/* onSubmit formに何かを打ち込んだときにどういう作業をするのか エンターキーまたは送信ボタンを押したら反映する*/}
         <input type="text" 
           // {/* todoリストのタスクを打ち込むところ */}
-          onChange={(e) => handleChange(e) }
-          // inputに文字を打ち込むたびに呼ばれるプロパティ inputValueを取得する handleChange(e)の(e)はevent情報
+          onChange={(e) => handleAddFormChange(e) }
+          // inputに文字を打ち込むたびに呼ばれるプロパティ inputValueを取得する handleAddFormChange(e)の(e)はevent情報
           className='inputText'
         />
         <input type="submit" 
@@ -118,6 +139,12 @@ function App() {
               onChange={(e) => handleChecked(todo.id, todo.checked)}
               // どのタスクかを指定するためのtodo.id と今のcheckedの状態を確認するtodo.checked
             />
+            <select value={todo.status}
+              onChange={(e) => handleStatusChange(todo.id, e.target.value)}>
+              <option value="notStarted">未着手</option>
+              <option value="inProgress">作業中</option>
+              <option value="done">完了</option>
+            </select>
             <button onClick={() => handleDelete(todo.id)}>消</button>
           </li>
         ))}
