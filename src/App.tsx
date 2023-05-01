@@ -53,38 +53,54 @@ function App() {
   // }
   // ※これはいらない？
 
+    // const handleEdit = (id: number, inputValue: string) => {
+    //   // idとinputValueという適当に引数を決める 型指定しているため、パラメーターエラーがでることがある。id:number, inputValue:stringと書いてエラー解消する
+    //   const newTodos = todos.map((todo) => {
+    //     // (todo)はひとつひとつをtodoと宣言する
+    //     if(todo.id === id) {
+    //       // 今見ているtodoのid(if文の中のtodo.id)が、id(===idのid)に等しければ変更を加える idはhandleEdit(todo.id, e.target.value)のtodo.idのこと
+    //       todo.inputValue = inputValue;
+    //       // inputValueは今編集している文字列のこと
+    //     }
+    //     return todo;
+    //   });
+
+    //   setTodos(newTodos);
+    // };
+
     const handleEdit = (id: number, inputValue: string) => {
-      // idとinputValueという適当に引数を決める 型指定しているため、パラメーターエラーがでることがある。id:number, inputValue:stringと書いてエラー解消する
-      const newTodos = todos.map((todo) => {
-        // (todo)はひとつひとつをtodoと宣言する
-        if(todo.id === id) {
-          // 今見ているtodoのid(if文の中のtodo.id)が、id(===idのid)に等しければ変更を加える idはhandleEdit(todo.id, e.target.value)のtodo.idのこと
-          todo.inputValue = inputValue;
-          // inputValueは今編集している文字列のこと
-        }
-        return todo;
-      });
+      const newTodos = todos.map((todo) => 
+      todo.id === id ? {...todo, inputValue: inputValue} :todo
+      )
+      setTodos(newTodos)
+    }
 
-      setTodos(newTodos);
-    };
 
-    const handleChecked = (id: number, checked: boolean) => {
-      const newTodos = todos.map((todo) => {
-        if(todo.id === id) {
-          // 今見ているtodoのid(if文の中のtodo.id)が、id(===idのid)に等しければ変更を加える idはhandleChecked(todo.id, todo.checked)のtodo.idのこと
-          todo.checked = !checked;
-          // チェック状態を反転させる
-        }
-        return todo;
-      });
+    // const handleChecked = (id: number, checked: boolean) => {
+    //   const newTodos = todos.map((todo) => {
+    //     if(todo.id === id) {
+    //       // 今見ているtodoのid(if文の中のtodo.id)が、id(===idのid)に等しければ変更を加える idはhandleChecked(todo.id, todo.checked)のtodo.idのこと
+    //       todo.checked = !checked;
+    //       // チェック状態を反転させる
+    //     }
+    //     return todo;
+    //   });
 
-      setTodos(newTodos);
-    };
+    //   setTodos(newTodos);
+    // };
+
+      const handleChecked = (id: number, checked: boolean) => {
+      const newTodos = todos.map((todo) => 
+      todo.id === id ? {...todo, checked: !checked} : todo
+      )
+      setTodos(newTodos)
+    }
 
     const handleStatusChange = (id: number, status: string) => {
       const newTodos = todos.map((todo) =>
       todo.id === id ? { ...todo, status: status } : todo
     )
+    // リストに含まれるtodoのid === 該当のtodoのid ? {更新したい情報} : todo
     
     setTodos(newTodos)
     }
