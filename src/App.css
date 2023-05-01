@@ -18,12 +18,20 @@
 }
 
 .todoList li {
-  width: 10%;
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  justify-content: center;
 }
 
 .todoList li input {
   padding: 7px;
+}
+
+.status {
+  padding: 8px 15px;
+}
+
+.deleteButton {
+  margin-left: 5px;
 }

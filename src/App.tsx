@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import  "./App.css"
 
 function App() {
@@ -7,6 +7,8 @@ function App() {
   // <Todo[]>はTodoの型指定 Todoの配列として持っておく 
   //  useState([])は空で用意している 
   // ===> 空の配列に何が入っていくものを、Todoの型指定をしたもののみ入るように指定している
+  const [filter, setFilter] = useState('notStarted')
+  const [filteredTodos, setFilteredTodos] = useState<Todo[]>([])
 
   type Todo = {
     inputValue: string; //入力したタスク
@@ -81,9 +83,9 @@ function App() {
 
     const handleStatusChange = (id: number, status: string) => {
       const newTodos = todos.map((todo) =>
-      todo.id === id ? { ...todo, status: e.target.value } : todo
+      todo.id === id ? { ...todo, status: status } : todo
     )
-    // ここのe.target.valueはどうすればいいのか？
+    
     setTodos(newTodos)
     }
     
@@ -96,13 +98,33 @@ function App() {
       setTodos(newTodos);
     };
 
+    useEffect(() => {
+      const filteringTodos = () => {
+        switch (filter) {
+          case 'notStarted': 
+          setFilteredTodos(todos.filter((todo) => todo.status === 'notStarted'))
+          break
+          case 'inProgress':
+          setFilteredTodos(todos.filter((todo) => todo.status === 'inProgress'))
+          break
+        case 'done':
+          setFilteredTodos(todos.filter((todo) => todo.status === 'done'))
+          break
+          default: setFilteredTodos(todos)}
+        }
+        filteringTodos()
+      },[filter, todos])
+    // どのタイミングで処理をしたいか　filterとtodosが更新された時
+
   return (
     <div className='App'>
       <h2>Todoリスト（中級編課題）</h2>
       <form onSubmit={(e) => handleSubmit(e)}>
         {/* onSubmit formに何かを打ち込んだときにどういう作業をするのか エンターキーまたは送信ボタンを押したら反映する*/}
-        <input type="text" 
+        <input 
+          type="text" 
           // {/* todoリストのタスクを打ち込むところ */}
+          value={inputValue}
           onChange={(e) => handleAddFormChange(e) }
           // inputに文字を打ち込むたびに呼ばれるプロパティ inputValueを取得する handleAddFormChange(e)の(e)はevent情報
           className='inputText'
@@ -111,13 +133,20 @@ function App() {
           // 送信ボタン typeをsubmitにするだけでボタンになる
           value="作成"
           className='submitButton' 
+          style={{margin: "0 10px"}}
         />
+        <select value ={filter} onChange={(e) => setFilter(e.target.value)} className='status'>
+              <option value="all">すべて</option>
+              <option value="notStarted">未着手</option>
+              <option value="inProgress">作業中</option>
+              <option value="done">完了</option>
+        </select>
       </form>
       {/* Todoリストを追加するためのformタグ */}
 
       <ul className='todoList'>
         {/* 新規作成したtodo配列をmap関数で展開する */}
-        {todos.map((todo) => (
+        {filteredTodos.map((todo) => (
           // ↑のtodoが５つあればliタグが５つ生成される
           <li key={todo.id}>
             {/* keyをつけて割り振る */}
@@ -139,13 +168,14 @@ function App() {
               onChange={(e) => handleChecked(todo.id, todo.checked)}
               // どのタスクかを指定するためのtodo.id と今のcheckedの状態を確認するtodo.checked
             />
-            <select value={todo.status}
+            
+            <select value={todo.status} className='status'
               onChange={(e) => handleStatusChange(todo.id, e.target.value)}>
               <option value="notStarted">未着手</option>
               <option value="inProgress">作業中</option>
               <option value="done">完了</option>
             </select>
-            <button onClick={() => handleDelete(todo.id)}>消</button>
+            <button className='deleteButton' onClick={() => handleDelete(todo.id)}>消</button>
           </li>
         ))}
       </ul>
